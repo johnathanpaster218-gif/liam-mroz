@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rocket Club</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #22c55e;
+      color: white;
+      margin: 10px;
+    }
+
+    #pack {
+      margin-top: 30px;
+    }
+
+    .card {
+      display: inline-block;
+      padding: 20px;
+      margin: 10px;
+      border-radius: 10px;
+      width: 120px;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    .common { background: gray; }
+    .rare { background: blue; }
+    .epic { background: purple; }
+    .legendary { background: gold; color: black; }
+
+    #collection {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚀 Rocket Club</h1>
+
+<button onclick="openPack()">Open Pack</button>
+<button onclick="clearCollection()">Reset Collection</button>
+
+<div id="pack"></div>
+
+<h2>Your Collection</h2>
+<div id="collection"></div>
+
+<script>
+  const cards = [
+    { name: "Basic Rocket", rarity: "common" },
+    { name: "Speed Rocket", rarity: "common" },
+    { name: "Blue Rocket", rarity: "rare" },
+    { name: "Fire Rocket", rarity: "rare" },
+    { name: "Galaxy Rocket", rarity: "epic" },
+    { name: "Shadow Rocket", rarity: "epic" },
+    { name: "Golden Rocket", rarity: "legendary" }
+  ];
+
+  function getRandomCard() {
+    let rand = Math.random();
+
+    if (rand < 0.6) return getByRarity("common");
+    if (rand < 0.85) return getByRarity("rare");
+    if (rand < 0.97) return getByRarity("epic");
+    return getByRarity("legendary");
+  }
+
+  function getByRarity(rarity) {
+    let filtered = cards.filter(c => c.rarity === rarity);
+    return filtered[Math.floor(Math.random() * filtered.length)];
+  }
+
+  function openPack() {
+    let packDiv = document.getElementById("pack");
+    packDiv.innerHTML = "";
+
+    let newCards = [];
+
+    for (let i = 0; i < 3; i++) {
+      let card = getRandomCard();
+      newCards.push(card);
+
+      let div = document.createElement("div");
+      div.className = "card " + card.rarity;
+      div.innerHTML = card.name;
+      packDiv.appendChild(div);
+    }
+
+    saveCards(newCards);
+    loadCollection();
+  }
+
+  function saveCards(newCards) {
+    let collection = JSON.parse(localStorage.getItem("collection")) || [];
+    collection = collection.concat(newCards);
+    localStorage.setItem("collection", JSON.stringify(collection));
+  }
+
+  function loadCollection() {
+    let collectionDiv = document.getElementById("collection");
+    collectionDiv.innerHTML = "";
+
+    let collection = JSON.parse(localStorage.getItem("collection")) || [];
+
+    collection.forEach(card => {
+      let div = document.createElement("div");
+      div.className = "card " + card.rarity;
+      div.innerHTML = card.name;
+      collectionDiv.appendChild(div);
+    });
+  }
+
+  function clearCollection() {
+    localStorage.removeItem("collection");
+    loadCollection();
+  }
+
+  loadCollection();
+</script>
+
+</body>
+</html>
